@@ -209,6 +209,10 @@ export class DmsCompanionPanel {
         null,
     };
 
+    if (this.isPanelControlFocused()) {
+      return;
+    }
+
     this.render();
     void this.applyPriorityCarryover();
   }
@@ -221,6 +225,15 @@ export class DmsCompanionPanel {
     this.state.statusText = text;
     this.state.statusTone = tone;
     this.render();
+  }
+
+  private isPanelControlFocused(): boolean {
+    const activeElement = this.shadow.activeElement;
+    return Boolean(
+      activeElement?.closest(
+        "input, select, textarea, button, [contenteditable='true']",
+      ),
+    );
   }
 
   private getPanelElement(): HTMLElement | null {
@@ -474,9 +487,9 @@ export class DmsCompanionPanel {
     }
 
     const snapshot = captureCurrentRouting(this.state.settings);
+    this.state.statusText = "Captured current routing into the preset editor. Enter a preset name to save.";
+    this.state.statusTone = "success";
     this.openEditor(null, snapshot);
-    this.setStatus("Captured current routing into the preset editor. Enter a preset name to save.", "success");
-    this.revealEditorCard();
   }
 
   private async handleUseLastRouting(): Promise<void> {
@@ -1117,6 +1130,8 @@ export class DmsCompanionPanel {
       return;
     }
 
+    const previousBody = this.shadow.querySelector<HTMLElement>(".dms-companion__body");
+    const previousScrollTop = previousBody?.scrollTop ?? null;
     const selectedPreset = this.getSelectedPreset();
     const statusClass =
       this.state.statusTone === "success"
@@ -1206,5 +1221,12 @@ export class DmsCompanionPanel {
 
     this.shadow.append(this.fileInput);
     this.bindEvents();
+
+    if (previousScrollTop !== null) {
+      const nextBody = this.shadow.querySelector<HTMLElement>(".dms-companion__body");
+      if (nextBody) {
+        nextBody.scrollTop = previousScrollTop;
+      }
+    }
   }
 }
