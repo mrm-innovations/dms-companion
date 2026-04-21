@@ -362,6 +362,22 @@ export class DmsCompanionPanel {
     });
   }
 
+  private revealEditorCard(): void {
+    const editorCard = this.shadow.querySelector<HTMLElement>("[data-editor-form]");
+    const nameInput = this.shadow.querySelector<HTMLInputElement>("#preset-name");
+    if (!editorCard) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      editorCard.scrollIntoView({
+        block: "start",
+        behavior: "smooth",
+      });
+      nameInput?.focus({ preventScroll: true });
+    });
+  }
+
   private getSelectedPreset(): RoutingPreset | null {
     if (!this.state?.selectedPresetId) {
       return null;
@@ -390,6 +406,7 @@ export class DmsCompanionPanel {
     this.state.editorOpen = true;
     this.state.manageOpen = true;
     this.render();
+    this.revealEditorCard();
   }
 
   private closeEditor(): void {
@@ -458,7 +475,8 @@ export class DmsCompanionPanel {
 
     const snapshot = captureCurrentRouting(this.state.settings);
     this.openEditor(null, snapshot);
-    this.setStatus("Captured current routing into the preset editor", "success");
+    this.setStatus("Captured current routing into the preset editor. Enter a preset name to save.", "success");
+    this.revealEditorCard();
   }
 
   private async handleUseLastRouting(): Promise<void> {
@@ -638,32 +656,6 @@ export class DmsCompanionPanel {
           });
         }
       });
-  }
-
-  private bindScrollContainment(): void {
-    const body = this.shadow.querySelector<HTMLElement>(".dms-companion__body");
-    if (!body) {
-      return;
-    }
-
-    body.addEventListener(
-      "wheel",
-      (event) => {
-        if (!(event.currentTarget instanceof HTMLElement)) {
-          return;
-        }
-
-        const container = event.currentTarget;
-        if (container.scrollHeight <= container.clientHeight + 1) {
-          return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-        container.scrollTop += event.deltaY;
-      },
-      { passive: false },
-    );
   }
 
   private bindEvents(): void {
@@ -869,7 +861,6 @@ export class DmsCompanionPanel {
     });
 
     this.bindEditorFields();
-    this.bindScrollContainment();
   }
 
   private renderSuggestedSection(): string {
@@ -1074,7 +1065,6 @@ export class DmsCompanionPanel {
         <section class="dms-companion__card">
           <h3>Manage Presets</h3>
           <div class="dms-companion__empty">No presets saved yet. Capture your current routing or create one manually.</div>
-          ${this.renderEditor()}
         </section>
       `;
     }
@@ -1118,7 +1108,6 @@ export class DmsCompanionPanel {
             )
             .join("")}
         </div>
-        ${this.renderEditor()}
       </section>
     `;
   }
@@ -1204,6 +1193,7 @@ export class DmsCompanionPanel {
                       <h3>Document Subject/Title</h3>
                       <p>${escapeHtml(this.state.subjectTitle || "No subject/title could be detected from the current page.")}</p>
                     </section>
+                    ${this.renderEditor()}
                     ${this.renderSuggestedSection()}
                     ${this.renderManageSection()}
                   </div>

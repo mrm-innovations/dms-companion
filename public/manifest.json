@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "DMS Companion",
   "description": "Preset-based routing helper for internal DMS routing pages.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "permissions": ["storage"],
   "host_permissions": ["https://dms.dilg.gov.ph/*"],
   "background": {

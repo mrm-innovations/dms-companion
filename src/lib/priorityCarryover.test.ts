@@ -36,4 +36,32 @@ describe("priorityCarryover", () => {
       (document.querySelector("input[value='rush']") as HTMLInputElement).checked,
     ).toBe(true);
   });
+
+  it("treats details priority NO as NORMAL so stale urgent/rush values are replaced", async () => {
+    document.body.innerHTML = `
+      <h1>P080-2026-04-20-015</h1>
+      <table>
+        <tr><td>Route no.</td><td>11303229</td></tr>
+        <tr><td>Priority</td><td>NO</td></tr>
+      </table>
+    `;
+
+    const captured = await capturePriorityFromDetailsPage(document, DEFAULT_SETTINGS);
+    expect(captured?.priority).toBe("NORMAL");
+
+    document.body.innerHTML = `
+      <div class="form-group">
+        <strong>Is the routed document a priority?</strong>
+        <label><input type="radio" name="priority" value="rush" /> RUSH DOCUMENT</label>
+        <label><input type="radio" name="priority" value="urgent" /> URGENT DOCUMENT</label>
+        <label><input type="radio" name="priority" value="normal" checked /> NORMAL</label>
+      </div>
+    `;
+
+    const applied = await applyCarriedPriorityToRoutingForm(DEFAULT_SETTINGS);
+    expect(applied).toBeNull();
+    expect(
+      (document.querySelector("input[value='normal']") as HTMLInputElement).checked,
+    ).toBe(true);
+  });
 });

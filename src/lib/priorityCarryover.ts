@@ -31,6 +31,10 @@ const normalizePriorityValue = (value: string | null | undefined): CarriedPriori
     return "NORMAL";
   }
 
+  if (["no", "none", "not priority", "not a priority"].includes(normalized)) {
+    return "NORMAL";
+  }
+
   return null;
 };
 
