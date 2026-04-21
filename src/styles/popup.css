@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  min-width: 280px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: #f4f7fb;
+  color: #19324d;
+}
+
+.popup-shell {
+  padding: 16px;
+}
+
+.popup-shell h1 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.popup-shell p {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.popup-shell button {
+  border: 0;
+  border-radius: 8px;
+  background: #185d8f;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px 12px;
+}

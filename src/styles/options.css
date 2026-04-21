@@ -1,0 +1,101 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: #eef3f8;
+  color: #163047;
+}
+
+.options-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.options-shell h1 {
+  margin: 0 0 8px;
+}
+
+.options-card {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(15, 41, 64, 0.08);
+}
+
+.options-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.options-meta strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.options-meta p {
+  margin: 0;
+  color: #5b7185;
+}
+
+.options-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.options-textarea {
+  width: 100%;
+  min-height: 520px;
+  padding: 14px;
+  border: 1px solid rgba(22, 48, 71, 0.16);
+  border-radius: 12px;
+  background: #fbfdff;
+  color: #163047;
+  font: 13px/1.5 Consolas, "Courier New", monospace;
+  resize: vertical;
+}
+
+.options-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.options-actions button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #165d8d;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.options-actions .secondary {
+  background: #e5edf5;
+  color: #21415f;
+}
+
+.options-help {
+  margin: 16px 0 0;
+  color: #5e768a;
+}
+
+.options-status {
+  min-height: 24px;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.options-status[data-tone="success"] {
+  color: #2b6e48;
+}
+
+.options-status[data-tone="error"] {
+  color: #8f3131;
+}

@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "DMS Companion",
+  "description": "Preset-based routing helper for internal DMS routing pages.",
+  "version": "0.1.0",
+  "permissions": ["storage"],
+  "host_permissions": ["https://dms.dilg.gov.ph/*"],
+  "background": {
+    "service_worker": "assets/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "DMS Companion",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["https://dms.dilg.gov.ph/*"],
+      "js": ["assets/content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "id": "hr-absence-routing",
+    "name": "HR Absence Routing",
+    "description": "For absence, leave, and attendance-related documents.",
+    "enabled": true,
+    "routeTo": "Human Resource",
+    "division": "Administration",
+    "section": "HR Section",
+    "actionOfficer": "HR Officer",
+    "action": "APPROPRIATE STAFF ACTION",
+    "forwardedOriginalDocument": true,
+    "priority": "NORMAL",
+    "matchingRules": {
+      "containsAny": ["absence", "leave", "attendance", "absenteeism"],
+      "containsAll": [],
+      "startsWith": [],
+      "exactPhrase": []
+    },
+    "createdAt": "2026-04-13T00:00:00.000Z",
+    "updatedAt": "2026-04-13T00:00:00.000Z"
+  },
+  {
+    "id": "legal-review-routing",
+    "name": "Legal Review Routing",
+    "description": "For legal opinions, review requests, and memoranda.",
+    "enabled": true,
+    "routeTo": "Legal Unit",
+    "division": "Office of the Mayor",
+    "section": "Legal",
+    "actionOfficer": ["City Legal Officer", "Legal Staff"],
+    "action": "APPROPRIATE STAFF ACTION",
+    "forwardedOriginalDocument": false,
+    "priority": "URGENT DOCUMENT",
+    "matchingRules": {
+      "containsAny": ["legal", "opinion", "review"],
+      "containsAll": [],
+      "startsWith": [],
+      "exactPhrase": []
+    },
+    "createdAt": "2026-04-13T00:00:00.000Z",
+    "updatedAt": "2026-04-13T00:00:00.000Z"
+  },
+  {
+    "id": "lgmed-routing",
+    "name": "LGMED Routing",
+    "description": "For LGMED-subject documents.",
+    "enabled": true,
+    "routeTo": "DILG",
+    "division": "LGMED",
+    "section": "Operations",
+    "actionOfficer": "LGMED Focal",
+    "action": "APPROPRIATE STAFF ACTION",
+    "forwardedOriginalDocument": false,
+    "priority": "NORMAL",
+    "matchingRules": {
+      "containsAny": ["lgmed"],
+      "containsAll": [],
+      "startsWith": ["lgmed"],
+      "exactPhrase": ["lgmed"]
+    },
+    "createdAt": "2026-04-13T00:00:00.000Z",
+    "updatedAt": "2026-04-13T00:00:00.000Z"
+  }
+]
