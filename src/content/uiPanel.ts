@@ -155,13 +155,17 @@ export class DmsCompanionPanel {
     const presets = await listPresets();
     const subjectTitle = captureSubjectTitle(settings);
     const savedPosition = await getFromStorage<unknown>(STORAGE_KEYS.panelPosition, null);
+    const savedCollapsed = await getFromStorage<boolean>(
+      STORAGE_KEYS.panelCollapsed,
+      true,
+    );
 
     this.state = {
       settings,
       presets,
       subjectTitle,
       selectedPresetId: presets[0]?.id ?? null,
-      collapsed: false,
+      collapsed: savedCollapsed,
       manageOpen: false,
       editorOpen: false,
       editor: null,
@@ -695,6 +699,7 @@ export class DmsCompanionPanel {
         }
 
         this.state.collapsed = !this.state.collapsed;
+        void setInStorage({ [STORAGE_KEYS.panelCollapsed]: this.state.collapsed });
         this.render();
       });
 
@@ -1144,14 +1149,21 @@ export class DmsCompanionPanel {
 
     this.shadow.innerHTML = `
       <style>${panelCss}</style>
-      <div class="dms-companion"${this.getPanelPositionStyle()}>
+      <div class="dms-companion ${this.state.collapsed ? "dms-companion--collapsed" : ""}"${this.getPanelPositionStyle()}>
         <div class="dms-companion__shell">
           <header class="dms-companion__header" data-drag-handle>
             <div>
               <h2>DMS Companion</h2>
               <p>Preset-based routing helper</p>
             </div>
-            <button class="dms-companion__icon-button" data-action="toggle-collapse">${this.state.collapsed ? "+" : "-"}</button>
+            <button
+              class="dms-companion__icon-button"
+              data-action="toggle-collapse"
+              aria-label="${this.state.collapsed ? "Expand DMS Companion" : "Minimize DMS Companion"}"
+              title="${this.state.collapsed ? "Expand" : "Minimize"}"
+            >
+              ${this.state.collapsed ? "+" : "-"}
+            </button>
           </header>
           ${
             this.state.collapsed

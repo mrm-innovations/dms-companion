@@ -32,6 +32,10 @@
   overflow: hidden;
 }
 
+.dms-companion--collapsed .dms-companion__shell {
+  max-height: none;
+}
+
 .dms-companion__header {
   display: flex;
   align-items: center;

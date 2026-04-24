@@ -5,6 +5,7 @@ export const STORAGE_KEYS = {
   lastRouting: "dmsCompanion.lastRouting",
   settings: "dmsCompanion.settings",
   panelPosition: "dmsCompanion.panelPosition",
+  panelCollapsed: "dmsCompanion.panelCollapsed",
   carriedPriority: "dmsCompanion.carriedPriority",
 } as const;
 
