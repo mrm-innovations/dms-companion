@@ -4,7 +4,10 @@
   "description": "Preset-based routing helper for internal DMS routing pages.",
   "version": "0.1.1",
   "permissions": ["storage"],
-  "host_permissions": ["https://dms.dilg.gov.ph/*"],
+  "host_permissions": [
+    "https://dms.dilg.gov.ph/*",
+    "http://localhost:3000/*"
+  ],
   "background": {
     "service_worker": "assets/background.js",
     "type": "module"

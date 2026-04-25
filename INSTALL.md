@@ -43,9 +43,11 @@ The extension uses:
 
 - `storage` for presets, settings, panel position, and temporary priority carry-over.
 - `https://dms.dilg.gov.ph/*` so it only runs on DMS pages.
+- `http://localhost:3000/*` so local development builds can send records to the tracker app.
 
 ## Current Notes
 
 - The extension fills routing fields only. It does not submit the DMS form.
+- The **Send to Tracker** action only creates or imports a tracker record; it does not change or submit the DMS form.
 - Priority carry-over applies once when the Internal Routing form opens and only when the form priority is blank or normal.
 - Presets and settings are stored locally in the user's browser profile.

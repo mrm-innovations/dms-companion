@@ -11,6 +11,13 @@ import {
 
 const root = document.querySelector<HTMLDivElement>("#app");
 
+const escapeHtml = (value: string): string =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+
 const render = async (): Promise<void> => {
   if (!root) {
     return;
@@ -35,6 +42,30 @@ const render = async (): Promise<void> => {
             <p>Currently ${settings.debug ? "enabled" : "disabled"}.</p>
           </div>
         </div>
+        <div class="options-tracker">
+          <h2>Communication Action Tracker</h2>
+          <label>
+            <input type="checkbox" id="tracker-enabled" ${settings.tracker.enabled ? "checked" : ""} />
+            Enable Send to Tracker
+          </label>
+          <div class="options-grid">
+            <label>
+              <span>Tracker App URL</span>
+              <input id="tracker-url" value="${escapeHtml(settings.tracker.appBaseUrl)}" />
+            </label>
+            <label>
+              <span>Extension Shared Secret</span>
+              <input id="tracker-secret" type="password" value="${escapeHtml(settings.tracker.sharedSecret)}" />
+            </label>
+          </div>
+          <label>
+            <input type="checkbox" id="tracker-open-created" ${settings.tracker.openCreatedRecord ? "checked" : ""} />
+            Open created tracker record after import
+          </label>
+          <div class="options-actions options-actions--compact">
+            <button type="button" id="save-tracker-settings">Save Tracker Settings</button>
+          </div>
+        </div>
         <label class="options-label" for="settings-json">Settings JSON</label>
         <textarea id="settings-json" class="options-textarea">${stringifySettings(settings)}</textarea>
         <div class="options-actions">
@@ -52,6 +83,42 @@ const render = async (): Promise<void> => {
 
   const textarea = root.querySelector<HTMLTextAreaElement>("#settings-json");
   const status = root.querySelector<HTMLDivElement>("#settings-status");
+  const trackerEnabled = root.querySelector<HTMLInputElement>("#tracker-enabled");
+  const trackerUrl = root.querySelector<HTMLInputElement>("#tracker-url");
+  const trackerSecret = root.querySelector<HTMLInputElement>("#tracker-secret");
+  const trackerOpenCreated = root.querySelector<HTMLInputElement>("#tracker-open-created");
+
+  root
+    .querySelector<HTMLButtonElement>("#save-tracker-settings")
+    ?.addEventListener("click", async () => {
+      if (
+        !textarea ||
+        !status ||
+        !trackerEnabled ||
+        !trackerUrl ||
+        !trackerSecret ||
+        !trackerOpenCreated
+      ) {
+        return;
+      }
+
+      try {
+        const parsed = parseSettings(textarea.value);
+        parsed.tracker = {
+          enabled: trackerEnabled.checked,
+          appBaseUrl: trackerUrl.value.trim(),
+          sharedSecret: trackerSecret.value.trim(),
+          openCreatedRecord: trackerOpenCreated.checked,
+        };
+        await saveSettings(parsed);
+        textarea.value = stringifySettings(parsed);
+        status.textContent = "Tracker settings saved.";
+        status.dataset.tone = "success";
+      } catch (error) {
+        status.textContent = `Invalid settings: ${(error as Error).message}`;
+        status.dataset.tone = "error";
+      }
+    });
 
   root
     .querySelector<HTMLButtonElement>("#save-settings")

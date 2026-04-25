@@ -15,6 +15,10 @@ import { loadSettings } from "@/lib/settingsManager";
 import { getFromStorage, setInStorage } from "@/lib/storage";
 import { getSuggestedPresets } from "@/lib/suggestionEngine";
 import {
+  buildDmsImportPayload,
+  sendDmsImportToTracker,
+} from "@/lib/trackerImport";
+import {
   cloneMatchingRules,
   parseCommaSeparated,
   serializeFieldValue,
@@ -527,6 +531,25 @@ export class DmsCompanionPanel {
     await this.runApplyFlow(transientPreset);
   }
 
+  private async handleSendToTracker(): Promise<void> {
+    if (!this.state) {
+      return;
+    }
+
+    try {
+      const payload = buildDmsImportPayload(this.state.settings);
+      this.setStatus("Sending communication to tracker...", "neutral");
+      const result = await sendDmsImportToTracker(this.state.settings, payload);
+      this.setStatus("Communication sent to tracker", "success");
+
+      if (this.state.settings.tracker.openCreatedRecord) {
+        window.open(result.appUrl, "_blank", "noopener,noreferrer");
+      }
+    } catch (error) {
+      this.setStatus(`Tracker import failed: ${(error as Error).message}`, "error");
+    }
+  }
+
   private async runApplyFlow(
     preset: RoutingPreset,
     options: { confirmed?: boolean } = {},
@@ -753,6 +776,12 @@ export class DmsCompanionPanel {
       .querySelector("[data-action='save-current']")
       ?.addEventListener("click", () => {
         void this.handleSaveCurrent();
+      });
+
+    root
+      .querySelector("[data-action='send-to-tracker']")
+      ?.addEventListener("click", () => {
+        void this.handleSendToTracker();
       });
 
     root.querySelector("[data-action='new-preset']")?.addEventListener("click", () => {
@@ -1207,6 +1236,7 @@ export class DmsCompanionPanel {
                         <button class="dms-companion__button" data-action="save-current">Save Current</button>
                         <button class="dms-companion__button-secondary" data-action="new-preset">New Blank</button>
                         <button class="dms-companion__button-secondary" data-action="use-last">Use Last Routing</button>
+                        <button class="dms-companion__button-secondary" data-action="send-to-tracker">Send to Tracker</button>
                         <button class="dms-companion__button-secondary" data-action="toggle-manage">${this.state.manageOpen ? "Hide Manage" : "Manage Presets"}</button>
                         <button class="dms-companion__button-secondary" data-action="export-presets">Export</button>
                         <button class="dms-companion__button-secondary" data-action="import-presets">Import</button>

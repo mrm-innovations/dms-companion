@@ -83,6 +83,12 @@ export const DEFAULT_SETTINGS: AppSettings = {
   debug: false,
   previewBeforeApply: true,
   carryPriorityForward: true,
+  tracker: {
+    enabled: false,
+    appBaseUrl: "http://localhost:3000",
+    sharedSecret: "",
+    openCreatedRecord: true,
+  },
   pageDetection: {
     hostIncludes: ["dms.dilg.gov.ph"],
     urlIncludes: [

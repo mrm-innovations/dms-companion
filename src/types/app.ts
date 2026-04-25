@@ -78,10 +78,18 @@ export type PageDetectionSettings = {
   requiredFieldLabels: string[];
 };
 
+export type TrackerSettings = {
+  enabled: boolean;
+  appBaseUrl: string;
+  sharedSecret: string;
+  openCreatedRecord: boolean;
+};
+
 export type AppSettings = {
   debug: boolean;
   previewBeforeApply: boolean;
   carryPriorityForward: boolean;
+  tracker: TrackerSettings;
   pageDetection: PageDetectionSettings;
   fieldMappings: Record<RoutingFieldKey, FieldMapping>;
 };

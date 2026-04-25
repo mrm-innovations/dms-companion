@@ -47,6 +47,46 @@ body {
   font-weight: 700;
 }
 
+.options-tracker {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid rgba(22, 48, 71, 0.12);
+  border-radius: 12px;
+  background: #f8fbfe;
+}
+
+.options-tracker h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.options-tracker label {
+  display: grid;
+  gap: 6px;
+}
+
+.options-tracker label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.options-grid input {
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid rgba(22, 48, 71, 0.16);
+  border-radius: 10px;
+  font: inherit;
+}
+
 .options-textarea {
   width: 100%;
   min-height: 520px;
@@ -63,6 +103,10 @@ body {
   display: flex;
   gap: 12px;
   margin-top: 16px;
+}
+
+.options-actions--compact {
+  margin-top: 0;
 }
 
 .options-actions button {

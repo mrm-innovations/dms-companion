@@ -35,6 +35,13 @@ const mergeSettings = (value: Partial<AppSettings> | null | undefined): AppSetti
     debug: source.debug ?? DEFAULT_SETTINGS.debug,
     previewBeforeApply: source.previewBeforeApply ?? DEFAULT_SETTINGS.previewBeforeApply,
     carryPriorityForward: source.carryPriorityForward ?? DEFAULT_SETTINGS.carryPriorityForward,
+    tracker: {
+      enabled: source.tracker?.enabled ?? DEFAULT_SETTINGS.tracker.enabled,
+      appBaseUrl: source.tracker?.appBaseUrl || DEFAULT_SETTINGS.tracker.appBaseUrl,
+      sharedSecret: source.tracker?.sharedSecret ?? DEFAULT_SETTINGS.tracker.sharedSecret,
+      openCreatedRecord:
+        source.tracker?.openCreatedRecord ?? DEFAULT_SETTINGS.tracker.openCreatedRecord,
+    },
     pageDetection: {
       hostIncludes: source.pageDetection?.hostIncludes?.length
         ? source.pageDetection.hostIncludes
