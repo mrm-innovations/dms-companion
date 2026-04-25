@@ -2,6 +2,30 @@
 
 DMS Companion is a Chromium extension for the DMS Internal Routing page.
 
+## Quick Local Install With PowerShell
+
+From the project folder:
+
+```powershell
+npm.cmd run install:local
+```
+
+This builds the extension, copies it to `%LOCALAPPDATA%\DMSCompanion\extension`, and opens the Microsoft Edge extensions page.
+
+For Chrome:
+
+```powershell
+npm.cmd run install:local:chrome
+```
+
+Then:
+
+1. Turn on **Developer mode**.
+2. Click **Load unpacked**.
+3. Select `%LOCALAPPDATA%\DMSCompanion\extension`.
+
+For future updates, run the same command again and click **Reload** on the DMS Companion extension card.
+
 ## Install From Release ZIP
 
 1. Extract the release ZIP, for example `dms-companion-0.1.0.zip`.

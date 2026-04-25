@@ -8,6 +8,8 @@
     "dev:main": "vite build --watch --mode development",
     "dev:content": "node scripts/build-content.mjs --watch",
     "build": "vite build && node scripts/build-content.mjs",
+    "install:local": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install-local.ps1 -Build",
+    "install:local:chrome": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install-local.ps1 -Build -Browser chrome",
     "package:zip": "npm run test && npm run build && node scripts/package-release.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
