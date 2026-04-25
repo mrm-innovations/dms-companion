@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   buildDmsImportPayloadFromSnapshot,
   findFirstEmail,
+  getDmsReferenceNoFromUrl,
+  getDmsRouteNoFromUrl,
   mapTrackerPriority,
   mapTrackerSectionCode,
   normalizeTrackerBaseUrl,
@@ -40,6 +42,13 @@ describe("tracker import mapping", () => {
     expect(findFirstEmail("No email")).toBeUndefined();
   });
 
+  it("extracts DMS URL identifiers as fallback metadata", () => {
+    const url = "https://dms.dilg.gov.ph/createroutenew?id=R12-LGMED-2026-03-26-003&routeno=11127887";
+
+    expect(getDmsReferenceNoFromUrl(url)).toBe("R12-LGMED-2026-03-26-003");
+    expect(getDmsRouteNoFromUrl(url)).toBe("11127887");
+  });
+
   it("builds a tracker import payload from a routing snapshot", () => {
     expect(
       buildDmsImportPayloadFromSnapshot({
@@ -47,6 +56,7 @@ describe("tracker import mapping", () => {
         routing: snapshot,
         dmsReferenceNo: "DMS-001",
         locationHref: "https://dms.dilg.gov.ph/routing",
+        routeNo: "11127887",
         title: "DMS",
       }),
     ).toMatchObject({

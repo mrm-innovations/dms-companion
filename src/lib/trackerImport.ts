@@ -76,6 +76,27 @@ export const findFirstEmail = (value: string | string[] | null): string | undefi
   return text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0];
 };
 
+export const getDmsReferenceNoFromUrl = (locationHref: string): string | undefined => {
+  try {
+    const url = new URL(locationHref);
+    return (
+      url.searchParams.get("id")?.trim() ||
+      url.searchParams.get("routeno")?.trim() ||
+      undefined
+    );
+  } catch {
+    return undefined;
+  }
+};
+
+export const getDmsRouteNoFromUrl = (locationHref: string): string | undefined => {
+  try {
+    return new URL(locationHref).searchParams.get("routeno")?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const normalizeDateValue = (value: string | null): string | undefined => {
   if (!value) {
     return undefined;
@@ -168,7 +189,8 @@ export const buildDmsImportPayload = (
 ): DmsImportPayload => {
   const routing = captureCurrentRouting(settings);
   const subject = captureSubjectTitle(settings) || document.title || "Untitled DMS communication";
-  const dmsReferenceNo = findMetadataValue("dmsReferenceNo") ?? undefined;
+  const dmsReferenceNo =
+    findMetadataValue("dmsReferenceNo") ?? getDmsReferenceNoFromUrl(locationHref);
   const sourceName = findMetadataValue("sourceName") ?? undefined;
   const sourceOffice = findMetadataValue("sourceOffice") ?? undefined;
   const dateReceived = normalizeDateOnlyValue(findMetadataValue("dateReceived"));
@@ -183,6 +205,7 @@ export const buildDmsImportPayload = (
     dateReceived,
     officialDeadline,
     locationHref,
+    routeNo: getDmsRouteNoFromUrl(locationHref),
     title: document.title,
   });
 };
@@ -196,6 +219,7 @@ export const buildDmsImportPayloadFromSnapshot = ({
   dateReceived,
   officialDeadline,
   locationHref,
+  routeNo,
   title,
 }: {
   subject: string;
@@ -206,6 +230,7 @@ export const buildDmsImportPayloadFromSnapshot = ({
   dateReceived?: string;
   officialDeadline?: string;
   locationHref: string;
+  routeNo?: string;
   title: string;
 }): DmsImportPayload => {
   const assignedSectionCode = mapTrackerSectionCode(routing.section);
@@ -235,6 +260,7 @@ export const buildDmsImportPayloadFromSnapshot = ({
     rawSnapshot: {
       source: "dms-companion",
       url: locationHref,
+      routeNo,
       title,
       routing,
     },
