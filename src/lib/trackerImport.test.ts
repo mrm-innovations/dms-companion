@@ -4,6 +4,7 @@ import {
   findFirstEmail,
   getDmsReferenceNoFromUrl,
   getDmsRouteNoFromUrl,
+  getTrackerImportReadiness,
   looksLikeDmsReferenceNo,
   mapTrackerPriority,
   mapTrackerSectionCode,
@@ -119,5 +120,30 @@ describe("tracker import mapping", () => {
     });
 
     globalThis.fetch = originalFetch;
+  });
+
+  it("reports tracker import readiness before sending", () => {
+    const readySettings: AppSettings = {
+      ...DEFAULT_SETTINGS,
+      tracker: {
+        enabled: true,
+        appBaseUrl: "https://divops.vercel.app",
+        sharedSecret: "secret",
+        openCreatedRecord: true,
+      },
+    };
+
+    expect(getTrackerImportReadiness(readySettings, { subject: "Subject" })).toEqual({
+      ready: true,
+    });
+    expect(
+      getTrackerImportReadiness(
+        { ...readySettings, tracker: { ...readySettings.tracker, sharedSecret: "" } },
+        { subject: "Subject" },
+      ),
+    ).toMatchObject({ ready: false });
+    expect(getTrackerImportReadiness(readySettings, { subject: "" })).toMatchObject({
+      ready: false,
+    });
   });
 });

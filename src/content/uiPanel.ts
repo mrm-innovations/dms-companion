@@ -16,6 +16,7 @@ import { getFromStorage, setInStorage } from "@/lib/storage";
 import { getSuggestedPresets } from "@/lib/suggestionEngine";
 import {
   buildDmsImportPayload,
+  getTrackerImportReadiness,
   sendDmsImportToTracker,
 } from "@/lib/trackerImport";
 import {
@@ -538,6 +539,12 @@ export class DmsCompanionPanel {
 
     try {
       const payload = buildDmsImportPayload(this.state.settings);
+      const readiness = getTrackerImportReadiness(this.state.settings, payload);
+      if (!readiness.ready) {
+        this.setStatus(readiness.reason ?? "Tracker import is not ready", "warn");
+        return;
+      }
+
       this.setStatus("Sending communication to tracker...", "neutral");
       const result = await sendDmsImportToTracker(this.state.settings, payload);
       this.setStatus(
@@ -1178,8 +1185,15 @@ export class DmsCompanionPanel {
         : this.state.statusTone === "warn"
           ? "dms-companion__status dms-companion__status--warn"
           : this.state.statusTone === "error"
-            ? "dms-companion__status dms-companion__status--error"
+          ? "dms-companion__status dms-companion__status--error"
             : "dms-companion__status";
+    const trackerReadiness = getTrackerImportReadiness(this.state.settings, {
+      subject: this.state.subjectTitle,
+    });
+    const sendToTrackerDisabled = trackerReadiness.ready ? "" : "disabled";
+    const sendToTrackerTitle = trackerReadiness.ready
+      ? "Send this DMS communication to the tracker"
+      : trackerReadiness.reason ?? "Tracker import is not ready";
 
     this.shadow.innerHTML = `
       <style>${panelCss}</style>
@@ -1241,14 +1255,14 @@ export class DmsCompanionPanel {
                         <button class="dms-companion__button" data-action="save-current">Save Current</button>
                         <button class="dms-companion__button-secondary" data-action="new-preset">New Blank</button>
                         <button class="dms-companion__button-secondary" data-action="use-last">Use Last Routing</button>
-                        <button class="dms-companion__button-secondary" data-action="send-to-tracker">Send to Tracker</button>
+                        <button class="dms-companion__button-secondary" data-action="send-to-tracker" ${sendToTrackerDisabled} title="${escapeHtml(sendToTrackerTitle)}">Send to Tracker</button>
                         <button class="dms-companion__button-secondary" data-action="toggle-manage">${this.state.manageOpen ? "Hide Manage" : "Manage Presets"}</button>
                         <button class="dms-companion__button-secondary" data-action="export-presets">Export</button>
                         <button class="dms-companion__button-secondary" data-action="import-presets">Import</button>
                         <button class="dms-companion__button-secondary" data-action="open-settings">Settings</button>
                       </div>
                       <div class="dms-companion__footer-note">
-                        Preview-before-apply is ${this.state.settings.previewBeforeApply ? "enabled" : "disabled"} in settings.
+                        ${trackerReadiness.ready ? "Tracker import is ready." : escapeHtml(sendToTrackerTitle)}
                       </div>
                     </section>
                     <section class="dms-companion__card">

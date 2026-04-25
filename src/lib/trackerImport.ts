@@ -28,6 +28,11 @@ export type TrackerImportResult = {
   alreadyExists: boolean;
 };
 
+export type TrackerImportReadiness = {
+  ready: boolean;
+  reason?: string;
+};
+
 const SECTION_CODES: TrackerSectionCode[] = ["PMES", "PCIS", "PLRS"];
 
 const labelAliases: Record<string, string[]> = {
@@ -49,6 +54,39 @@ const labelAliases: Record<string, string[]> = {
 
 export const normalizeTrackerBaseUrl = (value: string): string =>
   value.trim().replace(/\/+$/, "");
+
+const isValidHttpUrl = (value: string): boolean => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+};
+
+export const getTrackerImportReadiness = (
+  settings: AppSettings,
+  payload?: Pick<DmsImportPayload, "subject">,
+): TrackerImportReadiness => {
+  if (!settings.tracker.enabled) {
+    return { ready: false, reason: "Enable Send to Tracker in settings first." };
+  }
+
+  const appBaseUrl = normalizeTrackerBaseUrl(settings.tracker.appBaseUrl);
+  if (!appBaseUrl || !isValidHttpUrl(appBaseUrl)) {
+    return { ready: false, reason: "Set a valid Tracker App URL in settings." };
+  }
+
+  if (!settings.tracker.sharedSecret.trim()) {
+    return { ready: false, reason: "Set the extension shared secret in settings." };
+  }
+
+  if (payload && !payload.subject.trim()) {
+    return { ready: false, reason: "DMS document subject/title could not be detected." };
+  }
+
+  return { ready: true };
+};
 
 export const mapTrackerPriority = (value: string | null): TrackerPriority => {
   const normalized = (value ?? "").toUpperCase();
@@ -280,15 +318,12 @@ export const sendDmsImportToTracker = async (
   settings: AppSettings,
   payload: DmsImportPayload,
 ): Promise<TrackerImportResult> => {
-  if (!settings.tracker.enabled) {
-    throw new Error("Tracker import is disabled in settings.");
-  }
-
   const appBaseUrl = normalizeTrackerBaseUrl(settings.tracker.appBaseUrl);
   const sharedSecret = settings.tracker.sharedSecret.trim();
+  const readiness = getTrackerImportReadiness(settings, payload);
 
-  if (!appBaseUrl || !sharedSecret) {
-    throw new Error("Tracker URL and shared secret are required.");
+  if (!readiness.ready) {
+    throw new Error(readiness.reason ?? "Tracker import is not ready.");
   }
 
   const response = await fetch(`${appBaseUrl}/api/communications/import-from-dms`, {
