@@ -540,7 +540,12 @@ export class DmsCompanionPanel {
       const payload = buildDmsImportPayload(this.state.settings);
       this.setStatus("Sending communication to tracker...", "neutral");
       const result = await sendDmsImportToTracker(this.state.settings, payload);
-      this.setStatus("Communication sent to tracker", "success");
+      this.setStatus(
+        result.alreadyExists
+          ? "Communication already exists in tracker"
+          : "Communication sent to tracker",
+        "success",
+      );
 
       if (this.state.settings.tracker.openCreatedRecord) {
         window.open(result.appUrl, "_blank", "noopener,noreferrer");

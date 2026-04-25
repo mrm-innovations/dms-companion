@@ -25,6 +25,7 @@ export type DmsImportPayload = {
 export type TrackerImportResult = {
   communicationId: string;
   appUrl: string;
+  alreadyExists: boolean;
 };
 
 const SECTION_CODES: TrackerSectionCode[] = ["PMES", "PCIS", "PLRS"];
@@ -35,6 +36,8 @@ const labelAliases: Record<string, string[]> = {
     "DMS Reference Number",
     "Reference No",
     "Reference Number",
+    "Document Number",
+    "Document No",
     "Document Tracking No",
     "Document Tracking Number",
   ],
@@ -292,6 +295,18 @@ export const sendDmsImportToTracker = async (
   });
   const body = await response.json().catch(() => ({}));
 
+  if (
+    response.status === 409 &&
+    typeof body.communicationId === "string" &&
+    typeof body.appUrl === "string"
+  ) {
+    return {
+      communicationId: body.communicationId,
+      appUrl: `${appBaseUrl}${body.appUrl}`,
+      alreadyExists: true,
+    };
+  }
+
   if (!response.ok) {
     const message =
       typeof body.error === "string"
@@ -307,5 +322,6 @@ export const sendDmsImportToTracker = async (
   return {
     communicationId: body.communicationId,
     appUrl: `${appBaseUrl}${body.appUrl}`,
+    alreadyExists: false,
   };
 };

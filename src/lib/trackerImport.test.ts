@@ -7,8 +7,10 @@ import {
   mapTrackerPriority,
   mapTrackerSectionCode,
   normalizeTrackerBaseUrl,
+  sendDmsImportToTracker,
 } from "@/lib/trackerImport";
-import type { RoutingSnapshot } from "@/types/app";
+import { DEFAULT_SETTINGS } from "@/lib/constants";
+import type { AppSettings, RoutingSnapshot } from "@/types/app";
 
 const snapshot: RoutingSnapshot = {
   routeTo: "LGMED",
@@ -68,5 +70,43 @@ describe("tracker import mapping", () => {
       actionRequired: "Prepare draft response",
       dateRouted: "2026-04-25T00:00:00.000Z",
     });
+  });
+
+  it("treats tracker duplicate responses as an existing import result", async () => {
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () =>
+      new Response(
+        JSON.stringify({
+          error: "Communication already exists for this DMS reference number",
+          communicationId: "communication-id",
+          appUrl: "/communications/communication-id",
+        }),
+        {
+          status: 409,
+          headers: { "content-type": "application/json" },
+        },
+      );
+
+    const settings: AppSettings = {
+      ...DEFAULT_SETTINGS,
+      tracker: {
+        enabled: true,
+        appBaseUrl: "http://localhost:3000",
+        sharedSecret: "secret",
+        openCreatedRecord: true,
+      },
+    };
+
+    await expect(
+      sendDmsImportToTracker(settings, {
+        subject: "Existing tracker communication",
+      }),
+    ).resolves.toEqual({
+      communicationId: "communication-id",
+      appUrl: "http://localhost:3000/communications/communication-id",
+      alreadyExists: true,
+    });
+
+    globalThis.fetch = originalFetch;
   });
 });
