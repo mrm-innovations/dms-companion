@@ -100,6 +100,9 @@ export const getDmsRouteNoFromUrl = (locationHref: string): string | undefined =
   }
 };
 
+export const looksLikeDmsReferenceNo = (value: string | null | undefined): boolean =>
+  Boolean(value?.match(/^[A-Z0-9]+(?:-[A-Z0-9]+)*-\d{4}-\d{2}-\d{2}-\d+$/i));
+
 const normalizeDateValue = (value: string | null): string | undefined => {
   if (!value) {
     return undefined;
@@ -192,8 +195,11 @@ export const buildDmsImportPayload = (
 ): DmsImportPayload => {
   const routing = captureCurrentRouting(settings);
   const subject = captureSubjectTitle(settings) || document.title || "Untitled DMS communication";
-  const dmsReferenceNo =
-    findMetadataValue("dmsReferenceNo") ?? getDmsReferenceNoFromUrl(locationHref);
+  const pageReferenceNo = findMetadataValue("dmsReferenceNo") ?? undefined;
+  const urlReferenceNo = getDmsReferenceNoFromUrl(locationHref);
+  const dmsReferenceNo = looksLikeDmsReferenceNo(pageReferenceNo)
+    ? pageReferenceNo
+    : urlReferenceNo;
   const sourceName = findMetadataValue("sourceName") ?? undefined;
   const sourceOffice = findMetadataValue("sourceOffice") ?? undefined;
   const dateReceived = normalizeDateOnlyValue(findMetadataValue("dateReceived"));

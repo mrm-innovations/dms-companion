@@ -4,6 +4,7 @@ import {
   findFirstEmail,
   getDmsReferenceNoFromUrl,
   getDmsRouteNoFromUrl,
+  looksLikeDmsReferenceNo,
   mapTrackerPriority,
   mapTrackerSectionCode,
   normalizeTrackerBaseUrl,
@@ -49,6 +50,16 @@ describe("tracker import mapping", () => {
 
     expect(getDmsReferenceNoFromUrl(url)).toBe("R12-LGMED-2026-03-26-003");
     expect(getDmsRouteNoFromUrl(url)).toBe("11127887");
+  });
+
+  it("rejects broad page text as a DMS reference number", () => {
+    expect(looksLikeDmsReferenceNo("R12-2026-04-24-007")).toBe(true);
+    expect(looksLikeDmsReferenceNo("R12-LGMED-2026-03-26-003")).toBe(true);
+    expect(
+      looksLikeDmsReferenceNo(
+        "Department of the Interior and Local Government DMS version 5.4.2",
+      ),
+    ).toBe(false);
   });
 
   it("builds a tracker import payload from a routing snapshot", () => {
