@@ -67,6 +67,7 @@ The extension uses:
 
 - `storage` for presets, settings, panel position, and temporary priority carry-over.
 - `https://dms.dilg.gov.ph/*` so it only runs on DMS pages.
+- `https://divops.vercel.app/*` so production builds can send records to the tracker app.
 - `http://localhost:3000/*` so local development builds can send records to the tracker app.
 
 ## Current Notes

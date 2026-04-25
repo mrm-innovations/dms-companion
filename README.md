@@ -15,7 +15,7 @@ Lightweight Chromium extension for the DMS Internal Routing page. It reduces rep
 - Internal DMS controls may be native, enhanced, or fully custom widgets, so apply/capture logic has to be defensive.
 - Route dependencies may be async. A Division change can repopulate Section or Action Officer after a delay, so the applier retries staged field updates.
 - DOM drift is the main long-term risk. Labels often remain stable longer than CSS classes, so field lookup uses labels before generic fallback selectors.
-- Tracker import requires the tracker app URL to be allowed in `manifest.json` host permissions. Local development currently allows `http://localhost:3000/*`.
+- Tracker import requires the tracker app URL to be allowed in `manifest.json` host permissions. Production allows `https://divops.vercel.app/*`; local development also allows `http://localhost:3000/*`.
 
 ## Stack
 
@@ -158,7 +158,7 @@ The companion can send the visible DMS routing context to the separate LGMED Com
 1. Build and load the extension.
 2. Open extension settings.
 3. Set `tracker.enabled` to `true`.
-4. Set `tracker.appBaseUrl` to the tracker app URL, for local testing use `http://localhost:3000`.
+4. Set `tracker.appBaseUrl` to the tracker app URL. Production uses `https://divops.vercel.app`; local testing uses `http://localhost:3000`.
 5. Set `tracker.sharedSecret` to the same `EXTENSION_SHARED_SECRET` value configured in the tracker app.
 6. Save settings and refresh the DMS routing page.
 7. Click **Send to Tracker** in the floating panel.

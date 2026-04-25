@@ -48,8 +48,16 @@ if (packageJson.version !== manifest.version) {
   );
 }
 
-if (!manifest.host_permissions?.every((permission) => permission === "https://dms.dilg.gov.ph/*")) {
-  throw new Error("Manifest host_permissions must be limited to https://dms.dilg.gov.ph/*");
+const allowedHostPermissions = new Set([
+  "https://dms.dilg.gov.ph/*",
+  "https://divops.vercel.app/*",
+  "http://localhost:3000/*",
+]);
+
+if (!manifest.host_permissions?.every((permission) => allowedHostPermissions.has(permission))) {
+  throw new Error(
+    "Manifest host_permissions must be limited to DMS and configured tracker origins",
+  );
 }
 
 if (!manifest.content_scripts?.every((script) =>

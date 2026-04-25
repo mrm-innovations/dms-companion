@@ -85,7 +85,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   carryPriorityForward: true,
   tracker: {
     enabled: false,
-    appBaseUrl: "http://localhost:3000",
+    appBaseUrl: "https://divops.vercel.app",
     sharedSecret: "",
     openCreatedRecord: true,
   },
