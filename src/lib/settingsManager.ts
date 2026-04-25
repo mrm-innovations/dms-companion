@@ -2,6 +2,17 @@ import { DEFAULT_SETTINGS, STORAGE_KEYS } from "@/lib/constants";
 import { getFromStorage, setInStorage } from "@/lib/storage";
 import type { AppSettings, FieldMapping, RoutingFieldKey } from "@/types/app";
 
+const LEGACY_TRACKER_APP_BASE_URLS = new Set(["http://localhost:3000"]);
+
+export const migrateTrackerAppBaseUrl = (value: string | undefined): string =>
+  value && !LEGACY_TRACKER_APP_BASE_URLS.has(value)
+    ? value
+    : DEFAULT_SETTINGS.tracker.appBaseUrl;
+
+const needsTrackerAppBaseUrlMigration = (
+  value: Partial<AppSettings> | null | undefined,
+): boolean => Boolean(value?.tracker?.appBaseUrl && LEGACY_TRACKER_APP_BASE_URLS.has(value.tracker.appBaseUrl));
+
 const mergeFieldMapping = (
   base: FieldMapping,
   override: Partial<FieldMapping> | undefined,
@@ -37,7 +48,7 @@ const mergeSettings = (value: Partial<AppSettings> | null | undefined): AppSetti
     carryPriorityForward: source.carryPriorityForward ?? DEFAULT_SETTINGS.carryPriorityForward,
     tracker: {
       enabled: source.tracker?.enabled ?? DEFAULT_SETTINGS.tracker.enabled,
-      appBaseUrl: source.tracker?.appBaseUrl || DEFAULT_SETTINGS.tracker.appBaseUrl,
+      appBaseUrl: migrateTrackerAppBaseUrl(source.tracker?.appBaseUrl),
       sharedSecret: source.tracker?.sharedSecret ?? DEFAULT_SETTINGS.tracker.sharedSecret,
       openCreatedRecord:
         source.tracker?.openCreatedRecord ?? DEFAULT_SETTINGS.tracker.openCreatedRecord,
@@ -62,7 +73,13 @@ const mergeSettings = (value: Partial<AppSettings> | null | undefined): AppSetti
 
 export const loadSettings = async (): Promise<AppSettings> => {
   const value = await getFromStorage<Partial<AppSettings> | null>(STORAGE_KEYS.settings, null);
-  return mergeSettings(value);
+  const settings = mergeSettings(value);
+
+  if (needsTrackerAppBaseUrlMigration(value)) {
+    await saveSettings(settings);
+  }
+
+  return settings;
 };
 
 export const saveSettings = async (settings: AppSettings): Promise<void> => {
